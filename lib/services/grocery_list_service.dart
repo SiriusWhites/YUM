@@ -20,12 +20,13 @@ class GroceryListService {
     _groceryList.ingredients.clear();
   }
 
-  void populateGroceryListFromRecipe(
-    List<Ingredient> recipeIngredients,
-    List<Ingredient> pantryIngredients,
-  ) {
-    final missingIngredients = recipeIngredients
-        .where((ingredient) => !pantryIngredients.contains(ingredient));
+  void populateGroceryListFromRecipe(List<Ingredient> recipeIngredients, List<Ingredient> pantryIngredients) {
+    final missingIngredients = recipeIngredients.where((ingredient) => !pantryIngredients.contains(ingredient));
     _groceryList.ingredients.addAll(missingIngredients);
+  }
+
+  // Adding the new method
+  List<Ingredient> getGroceryItems() {
+    return _groceryList.ingredients;
   }
 }
