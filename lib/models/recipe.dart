@@ -3,7 +3,7 @@ import 'ingredient.dart';
 class Cuisine {
   final String name;
   final String description;
-
+  
   Cuisine({required this.name, required this.description});
 }
 
@@ -17,7 +17,7 @@ class Recipe {
   final List<String> dishTypes;
   final List<Ingredient> ingredients;
   final String instructions;
-
+  
   Recipe({
     required this.id,
     required this.title,
@@ -29,12 +29,12 @@ class Recipe {
     required this.ingredients,
     required this.instructions,
   });
-
+  
   double getTotalCookingTime() {
     // Calculate total cooking time based on readyInMinutes and other factors
     return readyInMinutes.toDouble();
   }
-
+  
   List<Ingredient> getScaledIngredients(int newServings) {
     // Scale the ingredient amounts based on the new number of servings
     return ingredients.map((ingredient) {
@@ -43,6 +43,8 @@ class Recipe {
         imageUrl: ingredient.imageUrl,
         amount: ingredient.amount * (newServings / servings),
         unit: ingredient.unit,
+        expirationDate: ingredient.expirationDate, // Add the expirationDate argument
+        storageLocation: ingredient.storageLocation, // Add the storageLocation argument
       );
     }).toList();
   }

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import 'package:yum/models/ingredient.dart';
-import 'package:yum/services/api_client.dart';
 import 'package:yum/services/ingredient_service.dart';
 import 'package:yum/services/spoonacular_api_service.dart';
-import 'package:yum/services/cache_manager.dart';
 import 'package:yum/widgets/ingredient_list_item.dart';
 
 class PantryPage extends StatefulWidget {
@@ -18,10 +16,7 @@ class PantryPage extends StatefulWidget {
 }
 
 class PantryPageState extends State<PantryPage> {
-  final ApiClient _apiClient = ApiClient(http.Client());
-  final IngredientService _ingredientService = IngredientService(
-    SpoonacularApiService(_apiClient, CacheManager()),
-  );
+  late final IngredientService _ingredientService;
   List<Ingredient> _ingredients = [];
   String _searchQuery = '';
   final _logger = Logger();
@@ -29,7 +24,16 @@ class PantryPageState extends State<PantryPage> {
   @override
   void initState() {
     super.initState();
+    _initializeServices();
     _fetchPantryIngredients();
+  }
+
+  void _initializeServices() {
+    final apiService = context.read<SpoonacularApiService>();
+    _ingredientService = IngredientService(
+      apiService: apiService,
+      logger: Logger(),
+    );
   }
 
   Future<void> _fetchPantryIngredients() async {
@@ -85,9 +89,6 @@ class PantryPageState extends State<PantryPage> {
                   context: context,
                   delegate: _PantrySearchDelegate(
                     initialQuery: _searchQuery,
-                    onSearch: (query) {
-                      _handleSearch(query);
-                    },
                   ),
                 );
               },
@@ -119,11 +120,9 @@ class PantryPageState extends State<PantryPage> {
 }
 
 class _PantrySearchDelegate extends SearchDelegate<void> {
-  final String Function(String) onSearch;
   final String initialQuery;
 
   _PantrySearchDelegate({
-    required this.onSearch,
     required this.initialQuery,
   });
 
@@ -134,7 +133,6 @@ class _PantrySearchDelegate extends SearchDelegate<void> {
         icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
-          onSearch(query);
           close(context, null);
         },
       ),
@@ -153,8 +151,9 @@ class _PantrySearchDelegate extends SearchDelegate<void> {
 
   @override
   Widget buildResults(BuildContext context) {
-    onSearch(query);
-    return const SizedBox.shrink();
+    PantryPageState state = context.findAncestorStateOfType<PantryPageState>()!;
+    state._handleSearch(query);
+    return const SizedBox.shrink(); // Return an empty widget
   }
 
   @override

@@ -4,14 +4,33 @@ import 'package:yum/widgets/ingredient_list_item.dart';
 
 class RecipeDetailsPage extends StatelessWidget {
   final Recipe recipe;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
-  const RecipeDetailsPage({Key? key, required this.recipe}) : super(key: key);
+  const RecipeDetailsPage({
+    super.key,
+    required this.recipe,
+    this.onEdit = null, // Make onEdit optional with default value null
+    this.onDelete = null, // Make onDelete optional with default value null
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(recipe.title),
+        actions: [
+          if (onEdit != null)
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: onEdit,
+            ),
+          if (onDelete != null)
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: onDelete,
+            ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -30,34 +49,34 @@ class RecipeDetailsPage extends StatelessWidget {
                 children: [
                   Text(
                     recipe.title,
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   Text(
                     'Ready in ${recipe.readyInMinutes} minutes',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   Text(
                     'Ingredients:',
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   ListView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: recipe.ingredients.length,
                     itemBuilder: (context, index) {
                       final ingredient = recipe.ingredients[index];
                       return IngredientListItem(ingredient: ingredient);
                     },
                   ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   Text(
                     'Instructions:',
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                  SizedBox(height: 8.0),
+                  const SizedBox(height: 8.0),
                   Text(recipe.instructions),
                 ],
               ),

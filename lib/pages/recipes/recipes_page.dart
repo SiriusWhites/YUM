@@ -33,7 +33,11 @@ class RecipesPage extends StatelessWidget {
                   Navigator.pushNamed(
                     context,
                     '/recipe-details',
-                    arguments: recipe,
+                    arguments: {
+                      'recipe': recipe,
+                      'onEdit': null, // Pass null for onEdit
+                      'onDelete': null, // Pass null for onDelete
+                    },
                   );
                 },
               );
